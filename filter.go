@@ -1,6 +1,10 @@
 package netlink
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/vishvananda/netlink/nl"
+)
 
 type Filter interface {
 	Attrs() *FilterAttrs
@@ -185,6 +189,7 @@ type U32 struct {
 	FilterAttrs
 	ClassId    uint32
 	RedirIndex int
+	Sel        *nl.TcU32Sel
 	Actions    []Action
 }
 

@@ -128,12 +128,15 @@ func (h *Handle) FilterAdd(filter Filter) error {
 
 	options := nl.NewRtAttr(nl.TCA_OPTIONS, nil)
 	if u32, ok := filter.(*U32); ok {
-		// match all
-		sel := nl.TcU32Sel{
-			Nkeys: 1,
-			Flags: nl.TC_U32_TERMINAL,
+		sel := u32.Sel
+		if sel == nil {
+			// match all
+			sel = &nl.TcU32Sel{
+				Nkeys: 1,
+				Flags: nl.TC_U32_TERMINAL,
+			}
+			sel.Keys = append(sel.Keys, nl.TcU32Key{})
 		}
-		sel.Keys = append(sel.Keys, nl.TcU32Key{})
 		nl.NewRtAttrChild(options, nl.TCA_U32_SEL, sel.Serialize())
 		if u32.ClassId != 0 {
 			nl.NewRtAttrChild(options, nl.TCA_U32_CLASSID, nl.Uint32Attr(u32.ClassId))
